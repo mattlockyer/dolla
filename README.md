@@ -1,3 +1,13 @@
+# Dolla
+
+> Cash rules everything around me, C.R.E.A.M., get the money, dollar dollar bill, y'all
+
+NEAR Money Printer Go Brrr!
+
+Print YUUUGE amounts of "NEAR CASH" bills and drop that STIMI!
+
+Receivers can claim to an existing account or use funds to set up a brand new NEAR Account!
+
 # React 17, Parcel with useContext and useReducer
 - Bundled with Parcel 2.0.1
 - *Minimal all-in-one state management with async/await support*
