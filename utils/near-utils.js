@@ -1,7 +1,8 @@
 const fs = require("fs");
 const nearAPI = require("near-api-js");
 const getConfig = require("./config");
-const { nodeUrl, walletUrl, networkId, contractId, isBrowser } = getConfig();
+const networkId = process.env.REACT_APP_ENV === 'prod' ? 'mainnet' : 'testnet'
+const { nodeUrl, walletUrl, contractId, isBrowser } = getConfig(networkId);
 
 const {
 	keyStores: { InMemoryKeyStore, BrowserLocalStorageKeyStore },

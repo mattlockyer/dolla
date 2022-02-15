@@ -3,8 +3,8 @@ const BN = require('bn.js');
 const fetch = require('node-fetch');
 const nearAPI = require('near-api-js');
 const { KeyPair, Account, Contract, utils: { format: { parseNearAmount, formatNearAmount } } } = nearAPI;
-const { near, credentials, connection, keyStore, contract, contractAccount } = require('./near-utils');
-const getConfig = require('./config');
+const { near, credentials, connection, keyStore, contract, contractAccount } = require('../utils/near-utils');
+const getConfig = require('../utils/config');
 const {
 	networkId, contractName, contractMethods, gas,
 	NEW_ACCOUNT_AMOUNT, 

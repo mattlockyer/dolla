@@ -1,31 +1,19 @@
 import React, { useContext, useEffect } from 'react';
-import {
-	Routes,
-	Route,
-	Link
-} from "react-router-dom";
-
+import { Routes, Route, Link } from "react-router-dom";
 import { appStore, onAppMount } from './state/app';
-
-import HelloMessage from './HelloMessage';
-
+import { Bills } from './Bills'
+import { Printer } from './Printer'
 import './App.scss';
 
 const App = () => {
 	const { state, dispatch, update } = useContext(appStore);
 
-	console.log('state', state);
-
 	const { wallet, account } = state
 
 	const onMount = () => {
-		dispatch(onAppMount('world'));
+		dispatch(onAppMount());
 	};
 	useEffect(onMount, []);
-
-	const handleClick = () => {
-		update('clicked', !state.clicked);
-	};
 
 	return (
 		<div>
@@ -36,33 +24,36 @@ const App = () => {
 						<Link to="/">Home</Link>
 					</li>
 					<li>
-						<Link to="/hello">Hello</Link>
+						<Link to="/wallet">Wallet</Link>
 					</li>
 					<li>
-						<Link to="/wallet">Wallet</Link>
+						<Link to="/printer">Printer</Link>
+					</li>
+					<li>
+						<Link to="/bills">Bills</Link>
 					</li>
 				</ul>
 			</nav>
 
 			<Routes>
 				<Route path="/wallet" element={
-					account ? <>
-						<p>{ account.accountId }</p>
-						<button onClick={() => wallet.signOut()}>Sign Out</button>
-					</> :
-					<>
-						<p>Not Signed In</p>
-						<button onClick={() => wallet.signIn()}>Sign In</button>
-					</>
+					account ?
+						<>
+							<h2>Wallet</h2>
+							<p>{account.accountId}</p>
+							<button onClick={() => wallet.signOut()}>Sign Out</button>
+						</>
+						:
+						<>
+							<h2>Wallet</h2>
+							<p>Not Signed In</p>
+							<button onClick={() => wallet.signIn()}>Sign In</button>
+						</>
 				} />
-				<Route path="/hello" element={
-					<HelloMessage message={state.foo && state.foo.bar.hello} />
-				} />
+				<Route path="/bills" element={<Bills {...{ account } } />} />
+				<Route path="/printer" element={<Printer {...{ account } } />} />
 				<Route path="/" element={
-					<>
-						<p>clicked: {JSON.stringify(state.clicked)}</p>
-						<button onClick={handleClick}>Click Me</button>
-					</>
+					<p>Hello</p>
 				} />
 			</Routes>
 

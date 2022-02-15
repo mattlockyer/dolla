@@ -6,7 +6,7 @@ const getConfig = require("../test/config");
 const network = 'mainnet'
 let { nodeUrl, networkId, GAS } = getConfig(network);
 GAS = "200000000000000"
-const contractId = 'ldproxy.near'
+const contractId = 'ld.dolla.near'
 
 const {
 	keyStores: { InMemoryKeyStore },
@@ -53,11 +53,7 @@ async function init () {
 	];
 	const state = await contractAccount.state()
 	if (state.code_hash === '11111111111111111111111111111111') {
-		actions.push(functionCall('new', { linkdrop_contract: network }, GAS))
-	}
-
-	if (linkdrop_contract) {
-		actions.push(functionCall('set_contract', { linkdrop_contract }, GAS))
+		actions.push(functionCall('new', { linkdrop_contract }, GAS))
 	}
 
 	await contractAccount.signAndSendTransaction({ receiverId: contractId, actions });

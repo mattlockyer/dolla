@@ -1,8 +1,11 @@
 import * as nearAPI from 'near-api-js';
-const { WalletAccount } = nearAPI
-import { near } from '../../utils/near-utils';
+import { near, contractAccount } from '../../utils/near-utils';
 import getConfig from '../../utils/config';
-const { contractId } = getConfig();
+const networkId = process.env.REACT_APP_ENV === 'prod' ? 'mainnet' : 'testnet'
+const { contractId, gas } = getConfig(networkId);
+const { KeyPair, WalletAccount, utils: { format: { parseNearAmount } } } = nearAPI
+
+export { near, networkId, contractAccount, KeyPair, parseNearAmount, contractId, gas }
 
 export const initNear = () => async ({ update }) => {
 

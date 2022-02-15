@@ -1,28 +1,44 @@
-const contractName = 'dev-1641324094428-51282167002626';
+const contractName = 'ld.dolla.near';
 
-module.exports = function getConfig(network = 'testnet') {
+module.exports = function getConfig(networkId = 'testnet') {
 	let config = {
-		networkId: "testnet",
+		networkId,
 		nodeUrl: "https://rpc.testnet.near.org",
 		walletUrl: "https://wallet.testnet.near.org",
 		helperUrl: "https://helper.testnet.near.org",
 		contractName,
 	};
 
-	switch (network) {
-	case 'testnet':
+	if (networkId) {
 		config = {
-			explorerUrl: "https://explorer.testnet.near.org",
 			...config,
 			GAS: "200000000000000",
 			gas: "200000000000000",
 			attachedDeposit: '10000000000000000000000', // 0.01 N (1kb storage)
-			NEW_ACCOUNT_AMOUNT: '1000000000000000000000000',
-			NEW_CONTRACT_AMOUNT: '5000000000000000000000000',
 			contractId: contractName,
 			isBrowser: new Function("try {return this===window;}catch(e){ return false;}")()
-		};
-		break;
+		}
+	}
+
+	switch (networkId) {
+		case 'testnet':
+			config = {
+				...config,
+				networkId,
+				explorerUrl: "https://explorer.testnet.near.org",
+			};
+			break;
+
+		case 'mainnet':
+			config = {
+				...config,
+				networkId,
+				explorerUrl: "https://explorer.near.org",
+				nodeUrl: "https://rpc.mainnet.near.org",
+				walletUrl: "https://wallet.near.org",
+				helperUrl: "https://helper.mainnet.near.org",
+			};
+			break;
 	}
 
 	return config;
