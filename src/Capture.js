@@ -36,7 +36,6 @@ export const Capture = ({ onClick }) => {
 		}
 
 		function startup() {
-			console.log('startup')
 			if (showViewLiveResultButton()) { return; }
 			video = document.getElementById('video');
 			canvas = document.getElementById('canvas');

@@ -16,7 +16,7 @@ const App = () => {
 	useEffect(onMount, []);
 
 	return (
-		<div>
+		<div className='container-fluid'>
 
 			<nav>
 				<ul>
@@ -35,27 +35,29 @@ const App = () => {
 				</ul>
 			</nav>
 
-			<Routes>
-				<Route path="/wallet" element={
-					account ?
-						<>
-							<h2>Wallet</h2>
-							<p>{account.accountId}</p>
-							<button onClick={() => wallet.signOut()}>Sign Out</button>
-						</>
-						:
-						<>
-							<h2>Wallet</h2>
-							<p>Not Signed In</p>
-							<button onClick={() => wallet.signIn()}>Sign In</button>
-						</>
-				} />
-				<Route path="/bills" element={<Bills {...{ account } } />} />
-				<Route path="/printer" element={<Printer {...{ account } } />} />
-				<Route path="/" element={
-					<p>Hello</p>
-				} />
-			</Routes>
+			<main>
+				<Routes>
+					<Route path="/wallet" element={
+						account ?
+							<>
+								<h2>Wallet</h2>
+								<p>{account.accountId}</p>
+								<button onClick={() => wallet.signOut()}>Sign Out</button>
+							</>
+							:
+							<>
+								<h2>Wallet</h2>
+								<p>Not Signed In</p>
+								<button onClick={() => wallet.signIn()}>Sign In</button>
+							</>
+					} />
+					<Route path="/bills" element={<Bills {...{ account }} />} />
+					<Route path="/printer" element={<Printer {...{ account }} />} />
+					<Route path="/" element={
+						<p>Hello</p>
+					} />
+				</Routes>
+			</main>
 
 		</div>
 	);

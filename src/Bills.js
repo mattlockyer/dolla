@@ -18,6 +18,7 @@ export const Bills = ({ account }) => {
 
 	const onMount = async (force) => {
 		if (!force && keys.length > 0) return
+
 		const validKeys = []
 		const keysLS = getKeysLS()
 		await Promise.all(keysLS.map(async (key) => {
@@ -32,7 +33,6 @@ export const Bills = ({ account }) => {
 				throw e
 			}
 		}))
-		console.log('validKeys', validKeys)
 
 		setKeys(validKeys);
 		setKeysLS(validKeys);
@@ -41,44 +41,78 @@ export const Bills = ({ account }) => {
 
 	return <>
 
-		<h2>Style</h2>
-
-		<div className="style">
-			<div>
-
-				<img id="1-dollar" src={OneDollar} onClick={() => setBackground(1)} />
-				<img id="100-dollar" src={HundredDollar} onClick={() => setBackground(100)} />
-			</div>
-			<div>
-				<Capture onClick={() => setImage(Math.random())} />
-			</div>
+		<div style={{ display: 'none' }}>
+			<img id="1-dollar" src={OneDollar} onClick={() => setBackground(1)} />
+			<img id="100-dollar" src={HundredDollar} onClick={() => setBackground(100)} />
 		</div>
 
-		<h2>Bills</h2>
 		{
-			keys.map((secretKey, i) => {
-				return <div key={secretKey}>
-					{/* <p>Bill #{i + 1}</p> */}
-					<Bill {...{ image, background, secretKey }} />
-					<div>
-						<button onClick={async () => {
-							const keyPair = KeyPair.fromString(secretKey)
-							near.connection.signer.keyStore.setKey(networkId, contractId, keyPair);
-							const res = await contractAccount.functionCall({
-								contractId,
-								methodName: 'claim',
-								args: {
-									account_id: account.accountId
-								},
-								// gas,
-							})
-							console.log(res)
-							onMount(true)
-						}}>Claim</button>
+			keys.length > 0
+				?
+				<>
+					<h3>Style</h3>
+
+					<div className="style">
+						<div>
+							<img src={OneDollar} onClick={() => setBackground(1)} />
+							<img src={HundredDollar} onClick={() => setBackground(100)} />
+						</div>
+						<div>
+							<Capture onClick={() => setImage(Math.random())} />
+						</div>
 					</div>
 
-				</div>
-			})
+					<h3>Bills</h3>
+					<div className="bills">
+						<button onClick={async () => {
+
+							for (let i = 0; i < keys.length; i++) {
+								const secretKey = keys[i]
+								const keyPair = KeyPair.fromString(secretKey)
+								near.connection.signer.keyStore.setKey(networkId, contractId, keyPair);
+								const res = await contractAccount.functionCall({
+									contractId,
+									methodName: 'claim',
+									args: {
+										account_id: account.accountId
+									},
+								})
+
+								console.log(res)
+								onMount(true)
+							}
+
+						}}>Reclaim All</button>
+						{
+							keys.map((secretKey, i) => {
+								return <div key={secretKey}>
+									<p>{i + 1} / { keys.length }</p>
+									<Bill {...{ image, background, secretKey }} />
+									<div>
+										<button onClick={async () => {
+											const keyPair = KeyPair.fromString(secretKey)
+											near.connection.signer.keyStore.setKey(networkId, contractId, keyPair);
+											const res = await contractAccount.functionCall({
+												contractId,
+												methodName: 'claim',
+												args: {
+													account_id: account.accountId
+												},
+												// gas,
+											})
+
+											console.log(res)
+											onMount(true)
+										}}>Reclaim Bill</button>
+									</div>
+
+								</div>
+							})
+						}
+					</div>
+				</>
+				:
+				<p>Print some bills using the printer!</p>
 		}
 	</>
 }

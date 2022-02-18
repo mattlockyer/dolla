@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import BN  from 'bn.js'
 
 import { getKeysLS, setKeysLS } from './state/app';
 import { parseNearAmount, KeyPair, contractId, gas } from './state/near';
@@ -7,7 +8,8 @@ export const Printer = ({ account }) => {
 
 	if (!account) return null
 
-	const [num, setNum] = useState(1)
+	const [num, setNum] = useState('1')
+	const [amount, setAmount] = useState('0.02')
 
 	const onMount = async () => {
 		
@@ -15,7 +17,10 @@ export const Printer = ({ account }) => {
 	useEffect(onMount, [])
 
 	return <>
-		<h2>Printer</h2>
+		<h3>Printer</h3>
+		<p>Amount</p>
+		<input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
+		<p>Number</p>
 		<input type="number" value={num} onChange={(e) => setNum(e.target.value)} />
 		<button onClick={() => {
 			const keysLS = getKeysLS()
@@ -34,7 +39,7 @@ export const Printer = ({ account }) => {
 					public_keys: keys.map((keyPair) => keyPair.publicKey.toString())
 				},
 				gas,
-				attachedDeposit: parseNearAmount((num * 0.02).toString())
+				attachedDeposit: new BN(parseNearAmount(amount)).mul(new BN(num))
 			})
 		}}>Print</button>
 	</>
