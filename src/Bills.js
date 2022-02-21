@@ -15,11 +15,11 @@ export const Bills = ({ account }) => {
 		<p>First, sign in with your wallet.</p>
 		<p>Print some bills using the printer!</p>
 	</>
+	const { accountId } = account
 
 	const [keys, setKeys] = useState([])
 	const [image, setImage] = useState(0)
 	const [background, setBackground] = useState(1)
-	const { accountId } = account
 
 	const checkKeys = async (which) => {
 		if (!which && keys.length > 0) return

@@ -8,6 +8,7 @@ export const Printer = ({ account }) => {
 
 	if (!account) return null
 
+	const { accountId } = account
 	const [num, setNum] = useState('1')
 	const [amount, setAmount] = useState('0.02')
 
