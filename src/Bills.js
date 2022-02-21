@@ -16,28 +16,31 @@ export const Bills = ({ account }) => {
 	const [image, setImage] = useState(0)
 	const [background, setBackground] = useState(1)
 
-	const onMount = async (force) => {
-		if (!force && keys.length > 0) return
+	const checkKeys = async (which) => {
+		if (!which && keys.length > 0) return
 
-		const validKeys = []
-		const keysLS = getKeysLS()
-		await Promise.all(keysLS.map(async (key) => {
+		/// checks all keys
+		if (!which) which = [...getKeysLS()]
+
+		const invalidKeys = []
+		await Promise.all(which.map(async (secretKey) => {
 			try {
-				const keyPair = KeyPair.fromString(key)
+				const keyPair = KeyPair.fromString(secretKey)
 				await account.viewFunction(contractId, 'get_key_balance', {
 					key: keyPair.publicKey.toString()
 				})
-				validKeys.push(key)
 			} catch (e) {
-				if (/Key missing/.test(e)) return console.log('Key missing from contract:', key)
+				if (/Key missing/.test(e)) return invalidKeys.push(secretKey)
 				throw e
 			}
 		}))
 
+		const validKeys = [...getKeysLS()].filter((secretKey) => !invalidKeys.includes(secretKey))
+
 		setKeys(validKeys);
 		setKeysLS(validKeys);
 	}
-	useEffect(onMount, [])
+	useEffect(checkKeys, [])
 
 	return <>
 
@@ -54,11 +57,11 @@ export const Bills = ({ account }) => {
 
 					<div className="style">
 						<div>
-							<img src={OneDollar} onClick={() => setBackground(1)} />
-							<img src={HundredDollar} onClick={() => setBackground(100)} />
+							<Capture onClick={() => setImage(Math.random())} />
 						</div>
 						<div>
-							<Capture onClick={() => setImage(Math.random())} />
+							<img src={OneDollar} onClick={() => setBackground(1)} />
+							<img src={HundredDollar} onClick={() => setBackground(100)} />
 						</div>
 					</div>
 
@@ -67,44 +70,51 @@ export const Bills = ({ account }) => {
 						<button onClick={async () => {
 
 							for (let i = 0; i < keys.length; i++) {
-								const secretKey = keys[i]
-								const keyPair = KeyPair.fromString(secretKey)
-								near.connection.signer.keyStore.setKey(networkId, contractId, keyPair);
-								const res = await contractAccount.functionCall({
-									contractId,
-									methodName: 'claim',
-									args: {
-										account_id: account.accountId
-									},
-								})
-
-								console.log(res)
-								onMount(true)
+								try {
+									const secretKey = keys[i]
+									const keyPair = KeyPair.fromString(secretKey)
+									near.connection.signer.keyStore.setKey(networkId, contractId, keyPair);
+									const res = await contractAccount.functionCall({
+										contractId,
+										methodName: 'claim',
+										args: {
+											account_id: account.accountId
+										},
+									})
+									// console.log(res)
+									checkKeys([secretKey])
+								} catch (e) {
+									if (/doesn't have access key/.test(e)) return console.log('invalid key')
+									throw e
+								}
 							}
 
 						}}>Reclaim All</button>
 						{
 							keys.map((secretKey, i) => {
 								return <div key={secretKey}>
-									<p>{i + 1} / { keys.length }</p>
-									<Bill {...{ image, background, secretKey }} />
-									<div>
-										<button onClick={async () => {
-											const keyPair = KeyPair.fromString(secretKey)
-											near.connection.signer.keyStore.setKey(networkId, contractId, keyPair);
-											const res = await contractAccount.functionCall({
-												contractId,
-												methodName: 'claim',
-												args: {
-													account_id: account.accountId
-												},
-												// gas,
-											})
-
-											console.log(res)
-											onMount(true)
-										}}>Reclaim Bill</button>
-									</div>
+									<p>{i + 1} / {keys.length}</p>
+									<Bill {...{
+										image, background, secretKey, reclaimFunc: async () => {
+											try {
+												const keyPair = KeyPair.fromString(secretKey)
+												near.connection.signer.keyStore.setKey(networkId, contractId, keyPair);
+												const res = await contractAccount.functionCall({
+													contractId,
+													methodName: 'claim',
+													args: {
+														account_id: account.accountId
+													},
+													// gas,
+												})
+												// console.log(res)
+												checkKeys([secretKey])
+											} catch (e) {
+												if (/doesn't have access key/.test(e)) return console.log('invalid key')
+												throw e
+											}
+										}
+									}} />
 
 								</div>
 							})

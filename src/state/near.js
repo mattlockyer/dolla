@@ -17,7 +17,8 @@ export const initNear = () => async ({ update }) => {
 	const signOut = wallet.signOut;
 	wallet.signOut = () => {
 		signOut.call(wallet);
-		update('', { account: null });
+		wallet.signedIn = false
+		update('', { account: null, wallet });
 	};
 
 	wallet.signedIn = wallet.isSignedIn();
@@ -25,6 +26,7 @@ export const initNear = () => async ({ update }) => {
 	let account;
 	if (wallet.signedIn) {
 		account = wallet.account();
+		wallet.account = account
 	}
 
 	await update('', { near, wallet, account });
