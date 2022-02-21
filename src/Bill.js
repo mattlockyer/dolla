@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Link } from "react-router-dom";
+import copy from "copy-to-clipboard";
 
 import { contractId } from './state/near'
 
@@ -86,13 +86,23 @@ export const Bill = ({ image, background, secretKey, reclaimFunc }) => {
 			var myImage = c.toDataURL("image/jpeg");
 			doc.addImage(myImage, 'JPEG', 0, 25, WIDTH, HEIGHT);
 			doc.setTextColor(0, 0, 255);
-			doc.textWithLink(url,  15, 15, { url });
+			doc.textWithLink(url, 15, 15, { url });
 			// doc.link(10, 10, WIDTH, 100, { url });
 			doc.save("a4.pdf");
 		}}>Download PDF</button>
-		<a href={url} target="_blank" rel="noreferrer noopener">
-			<button>Claim Link</button>
-		</a>
+
+		<button onClick={async () => {
+			if (window.navigator.share) {
+				await window.navigator.share({
+					title: 'You received a NEAR Bill!',
+					text: 'Click this link to claim!',
+					url,
+				});
+			} else {
+				copy(url)
+				alert('Link Copied!')
+			}
+		}}>Claim Link</button>
 		<button onClick={reclaimFunc}>Reclaim Bill</button>
 	</div>
 }
