@@ -42,40 +42,35 @@ const App = () => {
 		<div className="background"></div>
 
 		<nav>
-				<ul>
-					{
-						account && <><li>
-							<Link to="/">Bills</Link>
+			<ul>
+				<li>
+					<Link to="/">Bills</Link>
+				</li>
+				{
+					account && <>
+						<li>
+							<Link to="/printer">Printer</Link>
 						</li>
-							<li>
-								<Link to="/printer">Printer</Link>
-							</li>
-						</>
-					}
-					<li>
-						<Link to="/wallet">Wallet</Link>
-					</li>
-				</ul>
-			</nav>
+					</>
+				}
+				<li>
+					<Link to="/wallet">Wallet</Link>
+				</li>
+			</ul>
+		</nav>
 
 
 
 		<div className='container-fluid'>
 
-			
+
 			<main>
 				<Routes>
 					<Route path="/printer" element={<Printer {...{ account }} />} />
 
 					<Route path="/wallet" element={<Wallet {...{ wallet }} />} />
 
-					{
-						account
-							?
-							<Route path="/" element={<Bills {...{ account }} />} />
-							:
-							<Route path="/" element={<Wallet {...{ wallet }} />} />
-					}
+					<Route path="/" element={<Bills {...{ account }} />} />
 				</Routes>
 			</main>
 

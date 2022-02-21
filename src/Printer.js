@@ -23,14 +23,14 @@ export const Printer = ({ account }) => {
 		<p>Number</p>
 		<input type="number" value={num} onChange={(e) => setNum(e.target.value)} />
 		<button onClick={() => {
-			const keysLS = getKeysLS()
+			const keysLS = getKeysLS(accountId)
 			const keys = []
 			for (let i = 0; i < num; i++) {
 				const keyPair = KeyPair.fromRandom('ed25519')
 				keys.push(keyPair)
 				keysLS.push(keyPair.secretKey)
 			}
-			setKeysLS(keysLS)
+			setKeysLS(accountId, keysLS)
 
 			account.functionCall({
 				contractId,

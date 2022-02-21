@@ -8,8 +8,9 @@ const initialState = {
 };
 
 const KEYS = '__KEYS'
-export const getKeysLS = () => JSON.parse(localStorage.getItem(KEYS) || '[]')
-export const setKeysLS = (keys) => localStorage.setItem(KEYS, JSON.stringify(keys))
+export const getKeysLS = (accountId) => JSON.parse(localStorage.getItem(accountId + KEYS) || '[]')
+export const setKeysLS = (accountId, keys) => localStorage.setItem(accountId + KEYS, JSON.stringify(keys))
+
 export const { appStore, AppProvider } = State(initialState, 'app');
 
 // example app function

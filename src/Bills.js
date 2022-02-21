@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { getKeysLS, setKeysLS } from './state/app';
-import { near, contractAccount, KeyPair, networkId, contractId, gas } from './state/near';
+import { near, contractAccount, KeyPair, networkId, contractId } from './state/near';
 
 import { Bill } from './Bill'
 import { Capture } from './Capture'
@@ -10,17 +10,22 @@ import HundredDollar from './img/100-dollar.png'
 
 export const Bills = ({ account }) => {
 
-	if (!account) return null
+	if (!account) return <>
+		<h3>NEAR Printer</h3>
+		<p>First, sign in with your wallet.</p>
+		<p>Print some bills using the printer!</p>
+	</>
 
 	const [keys, setKeys] = useState([])
 	const [image, setImage] = useState(0)
 	const [background, setBackground] = useState(1)
+	const { accountId } = account
 
 	const checkKeys = async (which) => {
 		if (!which && keys.length > 0) return
 
 		/// checks all keys
-		if (!which) which = [...getKeysLS()]
+		if (!which) which = [...getKeysLS(accountId)]
 
 		const invalidKeys = []
 		await Promise.all(which.map(async (secretKey) => {
@@ -35,10 +40,10 @@ export const Bills = ({ account }) => {
 			}
 		}))
 
-		const validKeys = [...getKeysLS()].filter((secretKey) => !invalidKeys.includes(secretKey))
+		const validKeys = [...getKeysLS(accountId)].filter((secretKey) => !invalidKeys.includes(secretKey))
 
 		setKeys(validKeys);
-		setKeysLS(validKeys);
+		setKeysLS(accountId, validKeys);
 	}
 	useEffect(checkKeys, [])
 
@@ -59,7 +64,7 @@ export const Bills = ({ account }) => {
 						<div>
 							<Capture onClick={() => setImage(Math.random())} />
 						</div>
-						<div>
+						 <div>
 							<img src={OneDollar} onClick={() => setBackground(1)} />
 							<img src={HundredDollar} onClick={() => setBackground(100)} />
 						</div>
@@ -122,7 +127,10 @@ export const Bills = ({ account }) => {
 					</div>
 				</>
 				:
-				<p>Print some bills using the printer!</p>
+				<>
+					<h3>NEAR Printer</h3>
+					<p>Print some bills using the printer!</p>
+				</>
 		}
 	</>
 }
