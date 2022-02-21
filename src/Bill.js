@@ -67,8 +67,6 @@ export const Bill = ({ image, background, secretKey, reclaimFunc }) => {
 			q = qr.current.children[2]
 			ctx.drawImage(q, 0, 0, q.width, q.height, 506, 111, 190, 190);
 		}
-
-
 	}
 	useEffect(onImage, [image, background])
 
