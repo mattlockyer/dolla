@@ -51,6 +51,11 @@ export const Bill = ({ image, background, secretKey, reclaimFunc }) => {
 		console.log(photo.width, photo.height)
 
 		let margin = Math.max(0, photo.height - photo.width) / 2
+		let expand = HEIGHT / photo.height
+		if (expand < 1) {
+			expand *= 1.5
+		}
+		// alert(expand)
 
 		if (background === 1) {
 			ctx.drawImage(photo, 0, margin, photo.width, photo.height - margin * 2, WIDTH / 2 - photo.width / 2, 100, photo.width, photo.height - margin * 2);
@@ -63,7 +68,7 @@ export const Bill = ({ image, background, secretKey, reclaimFunc }) => {
 		} else {
 			ctx.fillStyle = 'white'
 			ctx.fillRect(0, 0, WIDTH * 2, HEIGHT * 2)
-			ctx.drawImage(photo, 0, 0, photo.width, photo.height, WIDTH / 2 - photo.width / 2 - 60, 20, photo.width, HEIGHT - 50);
+			ctx.drawImage(photo, 0, margin, photo.width, photo.height, WIDTH / 2 - (photo.width * expand) / 2 - 60, 20, photo.width * expand, photo.height * expand);
 			ctx.drawImage(image, 0, 0);
 
 			let q = qr.current.children[0]

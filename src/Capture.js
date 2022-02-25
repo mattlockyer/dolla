@@ -4,21 +4,13 @@ export const Capture = ({ onClick }) => {
 
 	const onMount = async () => {
 
-		var width = 320;    // We will scale the photo width to this
-		var height = 0;     // This will be computed based on the input stream
-
-		// |streaming| indicates whether or not we're currently streaming
-		// video from the camera. Obviously, we start at false.
-
-		var streaming = false;
+		let width = 320;    // We will scale the photo width to this
+		let height = 0;     // This will be computed based on the input stream
 
 		// The various HTML elements we need to configure or control. These
 		// will be set by the startup() function.
 
-		var video = null;
-		var canvas = null;
-		var photo = null;
-		var startbutton = null;
+		let streaming = false, video, canvas, photo, overlay, startbutton;
 
 		function showViewLiveResultButton() {
 			if (window.self !== window.top) {
@@ -39,17 +31,19 @@ export const Capture = ({ onClick }) => {
 			if (showViewLiveResultButton()) { return; }
 			video = document.getElementById('video');
 			canvas = document.getElementById('canvas');
+			overlay = document.getElementById('overlay');
 			photo = document.getElementById('photo');
 			startbutton = document.getElementById('startbutton');
 
 			navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-				.then(function (stream) {
-					video.srcObject = stream;
-					video.play();
-				})
-				.catch(function (err) {
-					console.log("An error occurred: " + err);
-				});
+			.then(function (stream) {
+				video.srcObject = stream;
+				video.play();
+			})
+			.catch(function (err) {
+				console.log("An error occurred: " + err);
+			});
+			
 
 			video.addEventListener('canplay', function (ev) {
 				if (!streaming) {
@@ -64,6 +58,8 @@ export const Capture = ({ onClick }) => {
 
 					video.setAttribute('width', width);
 					video.setAttribute('height', height);
+					overlay.setAttribute('width', width);
+					overlay.setAttribute('height', height);
 					canvas.setAttribute('width', width);
 					canvas.setAttribute('height', height);
 					streaming = true;
@@ -78,36 +74,46 @@ export const Capture = ({ onClick }) => {
 		}
 		startup()
 
+		function updateOverlay() {
+
+		}
+
 		// Capture a photo by fetching the current contents of the video
 		// and drawing it into a canvas, then converting that to a PNG
 		// format data URL. By drawing it on an offscreen canvas and then
 		// drawing that to the screen, we can change its size and/or apply
 		// other changes before drawing it.
 
-		let margin = Math.max(0, photo.height - photo.width) / 2
-
 		function takepicture() {
-			var context = canvas.getContext('2d');
+			let context = canvas.getContext('2d');
 			if (width && height) {
 				canvas.width = width;
 				canvas.height = height;
 				context.drawImage(video, 0, 0, width, height);
-				context.strokeStyle = 'red'
-				context.arc(width/2, height/2, width/2.5, 0, Math.PI*2)
-				context.stroke()
-
 				// var data = canvas.toDataURL('image/png');
 				// photo.setAttribute('src', data);
 			}
+
+			context = overlay.getContext('2d');
+			if (width && height) {
+				overlay.width = width;
+				overlay.height = height;
+				context.strokeStyle = 'red'
+				context.arc(width/2, height/2 - height/8, width/4, 0, Math.PI*2)
+				context.stroke()
+			}
 		}
+
+		setTimeout(takepicture, 1000)
 	}
 	useEffect(onMount, [])
 
 	return <>
 
 		<div className="camera">
-			<video id="video" className="display-none">Video stream not available.</video>
-  			<canvas id="canvas"></canvas>
+			<video id="video">Video stream not available.</video>
+  			<canvas id="overlay"></canvas>
+  			<canvas id="canvas" className="display-none"></canvas>
 			<br />
 			<button id="startbutton">Take photo</button>
 		</div>
