@@ -1,7 +1,7 @@
 {
-  "name": "react-parcel-boilerplate",
+  "name": "near-printer",
   "version": "1.0.0",
-  "description": "React Parcel Boilerplate",
+  "description": "Print NEAR Linkdrops as Bills",
   "author": "Matt Lockyer",
   "license": "ISC",
   "dependencies": {
