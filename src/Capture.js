@@ -84,12 +84,17 @@ export const Capture = ({ onClick }) => {
 		// drawing that to the screen, we can change its size and/or apply
 		// other changes before drawing it.
 
+		let margin = Math.max(0, photo.height - photo.width) / 2
+
 		function takepicture() {
 			var context = canvas.getContext('2d');
 			if (width && height) {
 				canvas.width = width;
 				canvas.height = height;
 				context.drawImage(video, 0, 0, width, height);
+				context.strokeStyle = 'red'
+				context.arc(width/2, height/2, width/2.5, 0, Math.PI*2)
+				context.stroke()
 
 				// var data = canvas.toDataURL('image/png');
 				// photo.setAttribute('src', data);
@@ -101,10 +106,10 @@ export const Capture = ({ onClick }) => {
 	return <>
 
 		<div className="camera">
-			<video id="video">Video stream not available.</video>
+			<video id="video" className="display-none">Video stream not available.</video>
+  			<canvas id="canvas"></canvas>
 			<br />
 			<button id="startbutton">Take photo</button>
-  			<canvas id="canvas" className="display-none"></canvas>
 		</div>
 
 	</>

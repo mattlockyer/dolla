@@ -48,8 +48,12 @@ export const Bill = ({ image, background, secretKey, reclaimFunc }) => {
 		ctx.fillStyle = '#FFF'
 		ctx.fillRect(0, 0, WIDTH, HEIGHT)
 
+		console.log(photo.width, photo.height)
+
+		let margin = Math.max(0, photo.height - photo.width) / 2
+
 		if (background === 1) {
-			ctx.drawImage(photo, 0, 0, photo.width, photo.height, WIDTH / 2 - photo.width / 2, 100, photo.width, photo.height);
+			ctx.drawImage(photo, 0, margin, photo.width, photo.height - margin * 2, WIDTH / 2 - photo.width / 2, 100, photo.width, photo.height - margin * 2);
 			ctx.drawImage(image, 0, 0);
 
 			let q = qr.current.children[0]
