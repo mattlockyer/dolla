@@ -24,6 +24,9 @@ export const Printer = ({ account }) => {
 		<p>Number</p>
 		<input type="number" value={num} onChange={(e) => setNum(e.target.value)} />
 		<button onClick={() => {
+			if (parseFloat(amount) < 0.02) {
+				return alert('Amount too small (min 0.02 per bill).')
+			}
 			const keysLS = getKeysLS(accountId)
 			const keys = []
 			for (let i = 0; i < num; i++) {
